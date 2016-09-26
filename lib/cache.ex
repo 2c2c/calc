@@ -14,6 +14,11 @@ defmodule Calc.Cache do
   end
 
 
+  def init([]) do
+    state = File.read!("./cache") |> :erlang.binary_to_term
+    {:ok, state}
+  end
+
   def handle_call({:lookup, action}, _from, state) do
     value = cache_seek(state, action)
 
@@ -22,6 +27,7 @@ defmodule Calc.Cache do
 
   def handle_call({:push, item}, _from, state) do
     new_state = [item | state]
+    File.write!("./cache", :erlang.term_to_binary(new_state))
 
     {:reply, :ok, new_state}
   end
