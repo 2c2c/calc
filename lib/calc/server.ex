@@ -1,8 +1,8 @@
 defmodule Calc.Server do
   use GenServer
 
-  def start_link do
-    GenServer.start_link(__MODULE__, [])
+  def start_link(state, opts \\ []) do
+    GenServer.start_link(__MODULE__, state, opts)
   end
 
   def add(pid, x, y) do
@@ -45,12 +45,3 @@ defmodule Calc.Server do
     {:reply, result, []}
   end
 end
-
-{:ok, server_pid} = Calc.Server.start_link
-{:ok, cache_pid} = Calc.Cache.start_link
-
-Calc.Server.add(server_pid, 2, 2)
-Calc.Server.add(server_pid, 3, 2)
-Calc.Server.add(server_pid, 5, 2)
-Calc.Server.add(server_pid, 2, 2)
-IO.inspect Calc.Server.history(2)

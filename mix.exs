@@ -14,7 +14,9 @@ defmodule Calc.Mixfile do
   #
   # Type "mix help compile.app" for more information
   def application do
-    [applications: [:logger]]
+    [applications: [:logger],
+    mod: {Calc, []}
+  ]
   end
 
   # Dependencies can be Hex packages:

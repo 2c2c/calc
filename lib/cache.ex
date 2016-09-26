@@ -1,8 +1,8 @@
 defmodule Calc.Cache do
   use GenServer
 
-  def start_link do
-    GenServer.start_link(__MODULE__, [], name: :cache)
+  def start_link(state, opts \\ []) do
+    GenServer.start_link(__MODULE__, state, opts)
   end
 
   def lookup(pid, action) do
