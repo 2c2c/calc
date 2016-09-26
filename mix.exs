@@ -14,7 +14,7 @@ defmodule Calc.Mixfile do
   #
   # Type "mix help compile.app" for more information
   def application do
-    [applications: [:logger],
+    [applications: [:logger, :poolboy],
     mod: {Calc, []}
   ]
   end
@@ -29,5 +29,8 @@ defmodule Calc.Mixfile do
   #
   # Type "mix help deps" for more examples and options
   defp deps do
+    [
+      {:poolboy, "~> 1.5"}
+    ]
   end
 end

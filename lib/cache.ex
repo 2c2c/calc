@@ -15,6 +15,7 @@ defmodule Calc.Cache do
 
 
   def init([]) do
+    File.mkdir_p("./cache")
     state = File.read!("./cache") |> :erlang.binary_to_term
     {:ok, state}
   end

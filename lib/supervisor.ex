@@ -1,13 +1,13 @@
 defmodule Calc.Supervisor do
   use Supervisor
-  
-  def start_link do
-    Supervisor.start_link(__MODULE__, [])
+
+  def start_link(opts \\ []) do
+    Supervisor.start_link(__MODULE__, opts)
   end
 
-  def init([]) do
+  def init(opts) do
     children = [
-      worker(Calc.Server, [[], [name: :server]]),
+      supervisor(Calc.ServerSupervisor, [[], [name: :server_supervisor]]),
       worker(Calc.Cache, [[], [name: :cache]])
     ]
 
