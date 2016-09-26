@@ -23,25 +23,24 @@ defmodule Calc.ServerSupervisor do
   end
 
   def add(x, y) do
-    :poolboy.transaction(
-      @pool_name,
-      fn(pid) -> Calc.Server.add(pid, x, y) end,
-      :infinity
-    )
+    func = fn(pid) -> Calc.Server.add(pid, x, y) end
+    pooled_command(func)
   end
 
   def sub(x, y) do
-    :poolboy.transaction(
-      @pool_name,
-      fn(pid) -> Calc.Server.sub(pid, x, y) end,
-      :infinity
-    )
+    func = fn(pid) -> Calc.Server.sub(pid, x, y) end
+    pooled_command(func)
   end
 
   def history(num_items) do
+      func = fn(pid) -> Calc.Server.history(num_items) end
+      pooled_command(func)
+  end
+
+  defp pooled_command(func) do
     :poolboy.transaction(
       @pool_name,
-      fn(pid) -> Calc.Server.history(num_items) end,
+      func,
       :infinity
     )
   end
