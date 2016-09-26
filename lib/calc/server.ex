@@ -13,43 +13,44 @@ defmodule Calc.Server do
     GenServer.call(pid, {:sub, x, y})
   end
 
-  def handle_call({:add, x, y}, from, state) do
+  def history(num_items) do
+    GenServer.call(:cache, {:history, num_items})
+  end
+
+  def handle_call({:add, x, y}, _from, state) do
     # if cached, skip calculation
-    cached_value = cache_seek(state, %{op: "add", params: [x, y]})
+    cached_value = Calc.Cache.lookup(:cache, %{op: "add", params: [x, y]})
     if cached_value == nil do
       result = Calc.add(x, y)
+      new_cached_item = %{op: "add", params: [x, y], result: result}
+      Calc.Cache.push(:cache, new_cached_item)
     else
       result = cached_value.result
     end
 
-    {:reply, result, [%{op: "add", params: [x, y], result: result} | state]}
+    {:reply, result, []}
   end
 
-  def handle_call({:sub, x, y}, from, state) do
+  def handle_call({:sub, x, y}, _from, state) do
     # if cached, skip calculation
-    cached_value = cache_seek(state, %{op: "sub", params: [x, y]})
+    cached_value = Calc.Cache.lookup(:cache, %{op: "sub", params: [x, y]})
     if cached_value == nil do
       result = Calc.sub(x, y)
+      new_cached_item = %{op: "sub", params: [x, y], result: result}
+      Calc.Cache.push(:cache, new_cached_item)
     else
       result = cached_value.result
     end
 
-    {:reply, result, [%{op: "sub", params: [x, y], result: result} | state]}
-  end
-
-  def handle_call({:history, max}, from, state) do
-    history =
-      state
-      |> Enum.take(max)
-      |> Enum.map(fn(x) -> "#{x.op}: #{inspect x.params} -> #{x.result}" end)
-
-    {:reply, history, state}
-  end
-  defp cache_seek(state, new_action) do
-    state
-    |> Enum.find(fn(x) -> equiv?(x, new_action) end)
-  end
-  defp equiv?(a,b) do
-    (a.op == b.op) && (Enum.sort(a.params) == Enum.sort(b.params))
+    {:reply, result, []}
   end
 end
+
+{:ok, server_pid} = Calc.Server.start_link
+{:ok, cache_pid} = Calc.Cache.start_link
+
+Calc.Server.add(server_pid, 2, 2)
+Calc.Server.add(server_pid, 3, 2)
+Calc.Server.add(server_pid, 5, 2)
+Calc.Server.add(server_pid, 2, 2)
+IO.inspect Calc.Server.history(2)
