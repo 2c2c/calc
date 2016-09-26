@@ -14,7 +14,7 @@ defmodule Calc do
   end
 
   def start(_type, _args) do
-    Calc.Supervisor.start_link
+    Calc.Supervisor.start_link([], [name: :supervisor])
   end
 
 end

@@ -1,8 +1,8 @@
 defmodule Calc.Supervisor do
   use Supervisor
 
-  def start_link(opts \\ []) do
-    Supervisor.start_link(__MODULE__, opts)
+  def start_link(state, opts \\ []) do
+    Supervisor.start_link(__MODULE__, state, opts)
   end
 
   def init(opts) do

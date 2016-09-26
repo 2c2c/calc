@@ -4,7 +4,7 @@ defmodule Calc.ServerSupervisor do
   @pool_name :server_pool
 
   def start_link(state, opts \\ []) do
-    Supervisor.start_link(__MODULE__, opts)
+    Supervisor.start_link(__MODULE__, state, opts)
   end
 
   def init(opts) do
